@@ -1,4 +1,5 @@
 let timerInterval; // Declare timerInterval in the outer scope
+let currentQuestion = 1; // Track the current question being answered
 
 document.getElementById('omr-setup-form').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -17,7 +18,7 @@ document.getElementById('omr-setup-form').addEventListener('submit', function(e)
 
     for (let i = 1; i <= numQuestions; i++) {
         omrBody.innerHTML += `
-            <tr>
+            <tr id="row-q${i}">
                 <td class="q-num">${i}</td>
                 <td>
                     <div class="radio-group">
@@ -37,6 +38,16 @@ document.getElementById('omr-setup-form').addEventListener('submit', function(e)
 
     // Start the timer with the exam duration
     startTimer(examDuration);
+
+    // Add hover event to focus question when mouse hovers
+    document.querySelectorAll('tr').forEach((row, index) => {
+        row.addEventListener('mouseover', () => {
+            focusQuestion(index); // Hovering highlights and focuses the question
+        });
+    });
+
+    // Focus the first question when OMR loads
+    focusQuestion(1); // Focus and highlight the first question
 });
 
 // Function to handle the countdown timer
@@ -49,7 +60,7 @@ function startTimer(duration) {
         let seconds = time % 60;
 
         // Display the remaining time
-        timerDisplay.textContent = `Time Remaining: ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        timerDisplay.textContent = `Time Remaining: ${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
 
         // Decrement the time
         time--;
@@ -79,6 +90,73 @@ document.addEventListener('change', function(e) {
     }
 });
 
+// Function to move focus to a specific question and highlight it
+function focusQuestion(questionNumber) {
+    const totalQuestions = document.getElementById('num-questions').value;
+
+    // Ensure we don't go out of bounds
+    if (questionNumber < 1 || questionNumber > totalQuestions) return;
+
+    currentQuestion = questionNumber;
+
+    // Scroll to and highlight the current question
+    document.querySelectorAll('tr').forEach((row) => {
+        row.style.backgroundColor = ''; // Reset background for all rows
+    });
+    const currentRow = document.getElementById(`row-q${currentQuestion}`);
+    // currentRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    currentRow.style.backgroundColor = '#f0f8ff'; // Highlight the current row
+}
+
+// Handle keydown events to select answers, lock answers, and navigate between questions
+document.addEventListener('keydown', function(e) {
+    const key = e.key;
+    const currentRadios = document.querySelectorAll(`input[name="q${currentQuestion}"]`);
+    const currentRow = document.getElementById(`row-q${currentQuestion}`);
+
+    if (['1', '2', '3', '4'].includes(key)) {
+        // Map keys 1-4 to radio buttons A-D
+        const index = parseInt(key) - 1; // Convert key '1', '2', etc. to index
+        if (currentRadios[index] && !currentRadios[index].disabled) {
+            currentRadios[index].checked = true;
+
+            // Simulate a change event to trigger any necessary logic
+            currentRadios[index].dispatchEvent(new Event('change'));
+        }
+    } else if (key === 'Enter') {
+        // Lock the selected answer for the current question
+        const selectedRadio = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+
+        if (selectedRadio && !selectedRadio.disabled) {
+            // Disable the selected radio button and lock the current question
+            const radios = currentRow.querySelectorAll('input[type="radio"]');
+            radios.forEach(radio => {
+                radio.disabled = true; // Disable all radio buttons for this question
+            });
+
+            // Apply background color to indicate answer is locked
+            currentRow.style.color = 'orange'; // Indicate locked state
+
+            // Move to the next question automatically
+            focusQuestion(currentQuestion + 1);
+        }
+    } else if (key === 'ArrowUp') {
+        // Move to the previous question
+        focusQuestion(currentQuestion - 1);
+    } else if ((key === 'ArrowDown') || (key === '0')) {
+        // Move to the next question
+        focusQuestion(currentQuestion + 1);
+    }
+    // Hide cursor on key press when on OMR sheet
+    const omrContainer = document.querySelector('.omr-container');
+    omrContainer.style.cursor = 'none'; // Hide the cursor
+});
+
+// Show cursor when mouse is moved in the OMR container
+document.querySelector('.omr-container').addEventListener('mousemove', function() {
+    this.style.cursor = 'default'; // Show the cursor
+});
+
 // Function to reset the OMR sheet (reset radio selections and restart the timer)
 function reset() {
     // Clear radio selections
@@ -101,6 +179,7 @@ function reset() {
     const examDuration = document.getElementById('exam-duration').value;
     clearInterval(timerInterval); // Stop any existing timer
     startTimer(examDuration); // Start a new timer
+    focusQuestion(1); // Reset to the first question
 }
 
 // Function to save answers when the user clicks 'Save'
@@ -118,11 +197,11 @@ function submitAnswers() {
         }
     }
 
-    console.log("Submitted Answers:", answers);
+    // console.log("Submitted Answers:", answers);
 
     // Display the answers in a simple alert box
     let answerSummary = answers.map(a => `Q${a.question}: ${a.answer || 'No Answer'}`).join('\n');
-    alert('Submitted Answers:\n' + answerSummary);
+    // alert('Submitted Answers:\n' + answerSummary);
     
     // Optionally, disable the inputs after submission
     document.querySelectorAll('input[type="radio"]').forEach(input => {
