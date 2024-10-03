@@ -27,13 +27,13 @@
       <br><br>
       <label for="marks-incorrect">Marks Deduction for Incorrect Answer:</label>
       <input type="number" step="0.01" id="marks-incorrect" name="marksIncorrect" min="0" required> -->
-      <button type="submit">Generate OMR Sheet</button>
+      <button type="submit">Start Exam</button>
     </form>
   </div>
 
   <div class="omr-container" style="display: none;">
-    <a href="https://nosibbiswas22.github.io/omr/"><h1>OMR Sheet Simulation</h1></a>
-    <p id="exam-timer"><span id="time-left">Time Remaining:</span></p>
+    <a href="https://nosibbiswas22.github.io/omr/"><h1>OMR Sheet</h1></a>
+    <p id="exam-timer"><span id="time-left">Time Remaining: 00:00</span></p>
     
     <table>
       <thead>
@@ -48,14 +48,14 @@
     </table>
     <div class="btn-container">
       <button class="submit-btn" onclick="reset()">Reset</button>
-      <button class="submit-btn" onclick="submitAnswers()">Save</button>
+      <button class="submit-btn" onclick="submitAnswers()">Done</button>
     </div>
   </div>
 
   <!-- Styled Horizontal Line -->
   <hr class="footer-hr">
   <div class="footer">
-    <p>Developed by Nosib Biswas © 2024</p>
+    <a href="https://nosibbiswas22.github.io/nosibbiswas/"><p>Developed by Nosib Biswas © 2024</p></a>
   </div>
 
   <script src="script.js"></script>
