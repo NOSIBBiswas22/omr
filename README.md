@@ -64,11 +64,6 @@ The OMR (Optical Mark Recognition) Sheet application is designed to facilitate t
 
 ## Contact
 
-```plaintext
- Coding by Nosib Biswas
- Copyright 2024. All rights reserved.
- https://nosibbiswas22.github.io/nosibbiswas/
-```
 For any questions or contributions, please feel free to reach out via [GitHub](https://github.com/NOSIBBiswas22/).
  [Facebook](https://www.facebook.com/nosib.biswas.227).
  [Website](https://nosibbiswas22.github.io/nosibbiswas/).
