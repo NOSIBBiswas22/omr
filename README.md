@@ -16,7 +16,7 @@ The OMR (Optical Mark Recognition) Sheet application is designed to facilitate t
 - Keyboard navigation and selection
 - Reset functionality to clear answers and restart the exam
 
-##Demo
+## Live Demo
 - Website: (https://nosibbiswas22.github.io/omr/)
 
 ## Technologies Used
